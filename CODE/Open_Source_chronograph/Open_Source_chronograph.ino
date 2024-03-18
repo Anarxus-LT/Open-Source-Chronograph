@@ -16,11 +16,14 @@
 #define UpButtonPin 13
 #define DownButtonPin 14
 #define MenuButtonPin 15
+#define Trigger1 11
+#define Trigger2 12
+#define SensorDistance 100 // in mm
 
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-
+// Variable decleration
 String batper = "";
 int bat = 0;
 float vbat= 0;
@@ -33,6 +36,8 @@ int fps = 0;
 volatile bool ButtUpInt = false;
 volatile bool ButDownInt = false;
 volatile bool ButMenuInt = false;
+volatile unsigned long time1 = 0;
+volatile unsigned long time2 = 0;
 
 void setup() {
   Serial.begin(9200);
@@ -41,7 +46,7 @@ void setup() {
   display.clearDisplay();
   // Boot splash
   Splash();
-  // Main display
+  // Main display UI init
   display.drawLine(0, 14, 128, 14, WHITE);
   update_battery();
   display.setTextSize(1);
@@ -69,12 +74,19 @@ void setup() {
   attachInterrupt(DownButtonPin, ButDownInt_f, LOW );
   attachInterrupt(MenuButtonPin, ButMenuInt_f, LOW );
 
+  //Init IR Triggers
+  pinMode (Trigger1, INPUT);
+  pinMode (Trigger2, INPUT);
+  attachInterrupt(Trigger1, Trigger1_Time, HIGH );
+  attachInterrupt(Trigger2, Trigger2_Time, HIGH );
+
   //Launch second core
     multicore_launch_core1(core1_UI_updater);
 
 }
 
 void loop() {
+  // menu button selector handling
   switch(selector){
     case 0:
       break;
@@ -87,9 +99,9 @@ void loop() {
       display.print("BB: ");
       display.display();
       delay(250);
-      //Serial.println("blink");
       break;
   }
+  // Button interupt functions
   if (ButMenuInt == true){
     ButMenu();
   }else if (ButDownInt == true){
@@ -98,6 +110,26 @@ void loop() {
     ButUp();
   }
 
+  // FPS measurment 
+  if (time1 != 0 && time2 != 0){
+    //Got a sucessful read
+    // calculate fps here
+  }else if (abs(int(time1 - time2)) > 2000){
+    // Bad read reset timers and show error
+    time1 =0;
+    time2 =0;
+    message("Retry");
+  }
+
+}
+
+void message(String msg){
+  delay(250); //without this delay the display glitches for some reason
+  display.fillRect(5, 50, 65, 15, BLACK);
+  display.setTextSize(1);
+  display.setCursor(5,50);
+  display.print(msg);
+  display.display();
 }
 
 void core1_UI_updater(){
@@ -105,6 +137,15 @@ void core1_UI_updater(){
       update_battery();
       delay(10000);
   }
+}
+
+void Trigger1_Time(){
+  time1 = millis();
+  Serial.println("t1");
+}
+void Trigger2_Time(){
+  time2 = millis();
+  Serial.println("t2");
 }
 
 void ButtUpInt_f(){
@@ -162,9 +203,6 @@ void updatebb_weight(){
 void update_battery(){
   vbat = analogRead(29)/100.0;
   bat = ceil(((vbat-3)/(4.2-3))*100);
-  //Serial.println("raw:  "+ String(analogRead(29)));
-  //Serial.println("vbat:  "+ String(vbat));
-  //Serial.println("bat:  "+ String(bat));
 
   if (bat == 100){
     batper = ""+String(bat) + "%";
