@@ -1,6 +1,24 @@
 /*
-
-
+ ___________ _____ _   _   _____  _____ _   _______  _____  _____      
+|  _  | ___ \  ___| \ | | /  ___||  _  | | | | ___ \/  __ \|  ___|     
+| | | | |_/ / |__ |  \| | \ `--. | | | | | | | |_/ /| /  \/| |__       
+| | | |  __/|  __|| . ` |  `--. \| | | | | | |    / | |    |  __|      
+\ \_/ / |   | |___| |\  | /\__/ /\ \_/ / |_| | |\ \ | \__/\| |___      
+ \___/\_|   \____/\_| \_/ \____/  \___/ \___/\_| \_| \____/\____/      
+                                                                       
+                                                                       
+ _____  _   _ ______ _____ _   _ _____ _____ ______  ___  ______ _   _ 
+/  __ \| | | || ___ \  _  | \ | |  _  |  __ \| ___ \/ _ \ | ___ \ | | |
+| /  \/| |_| || |_/ / | | |  \| | | | | |  \/| |_/ / /_\ \| |_/ / |_| |
+| |    |  _  ||    /| | | | . ` | | | | | __ |    /|  _  ||  __/|  _  |
+| \__/\| | | || |\ \\ \_/ / |\  \ \_/ / |_\ \| |\ \| | | || |   | | | |
+ \____/\_| |_/\_| \_|\___/\_| \_/\___/ \____/\_| \_\_| |_/\_|   \_| |_/
+                                                                       
+==========================================================================
+Read LICENCE
+Description: An open source chronograph used to measure the speed and 
+            energy of projectiles. Mainly intended for airsoft.
+Author: Lykourgos Tanious
 
 */
 
@@ -31,13 +49,16 @@ int selector = 0;
 float bbweight = 0.23;
 float speedmet = 0;
 float powerj = 0;
-float rps = 0;
+int rps = 0;
 int fps = 0;
+int shotcounter = 0;
 volatile bool ButtUpInt = false;
 volatile bool ButDownInt = false;
 volatile bool ButMenuInt = false;
+// time2-time1 1025 gives 320fps for tests
 volatile unsigned long time1 = 0;
 volatile unsigned long time2 = 0;
+unsigned long firstshottime =0;
 
 void setup() {
   Serial.begin(9200);
@@ -57,7 +78,7 @@ void setup() {
   display.setCursor(5,26);
   display.print("POW: " + String(powerj) + "J");
   display.setCursor(5,36);
-  display.print("RPS: " + String(powerj));
+  display.print("RPS: " + String(rps));
   display.drawLine(80, 16, 80, 64, WHITE);
   display.setCursor(90,20);
   display.print("FPS");
@@ -113,14 +134,71 @@ void loop() {
   // FPS measurment 
   if (time1 != 0 && time2 != 0){
     //Got a sucessful read
-    // calculate fps here
-  }else if (abs(int(time1 - time2)) > 2000){
+    fps = floor(0.32808398950131235/((float(time2)-float(time1))/1000000.0));
+    message("PEW !");
+    fpsdisp(fps);
+    msdisp(fps);
+    powdisp();
+    time1 = 0;
+    time2 = 0;
+    shotcounter++;
+  }else if (abs(int(time1 - time2)) > 2000000){
     // Bad read reset timers and show error
-    time1 =0;
-    time2 =0;
+    time1 = 0;
+    time2 = 0;
     message("Retry");
   }
 
+  // Measure RPS
+  if ((shotcounter == 1) && (firstshottime = 0)){
+    firstshottime=millis();
+  }
+  if (((millis()-firstshottime)>1000) && shotcounter != 0){
+    rps = shotcounter;
+    rpsdisp();
+    shotcounter = 0;
+    firstshottime = 0;
+    message("Wait");
+    delay(2000);
+    message("Go !");
+  }
+
+
+}
+
+void rpsdisp(){
+  display.fillRect(27, 36, 53, 10, BLACK);
+  display.setTextSize(1);
+  display.setCursor(27,36);
+  display.print(" " + String(rps));
+  display.display();
+}
+
+void powdisp(){
+  powerj = 0.5 * float(bbweight/1000.0) * sq(speedmet);
+  display.fillRect(27, 26, 53, 10, BLACK);
+  display.setTextSize(1);
+  display.setCursor(27,26);
+  display.print(" " + String(powerj, 2) + "J");
+  display.display();
+}
+
+void msdisp(int fps){
+  speedmet = fps * 0.3048;
+  display.fillRect(27, 16, 53, 10, BLACK);
+  display.setTextSize(1);
+  display.setCursor(27,16);
+  display.print(" " + String(speedmet, 1) + "m/s");
+  display.display();
+}
+
+void fpsdisp(int fps){
+  String fpsstring = String(fps);
+  display.fillRect(90, 40, 128, 64, BLACK);
+  display.setTextSize(2);
+  display.setCursor(90,40);
+  display.print(fps);
+  display.display();
 }
 
 void message(String msg){
@@ -134,17 +212,18 @@ void message(String msg){
 
 void core1_UI_updater(){
   while (true){
-      update_battery();
       delay(10000);
+      update_battery();
+      message("");
   }
 }
 
 void Trigger1_Time(){
-  time1 = millis();
+  time1 = micros();
   Serial.println("t1");
 }
 void Trigger2_Time(){
-  time2 = millis();
+  time2 = micros();
   Serial.println("t2");
 }
 
@@ -165,6 +244,7 @@ void ButUp(){
     case 1:
       bbweight += 0.01;
       updatebb_weight();
+      powdisp();
       break;
   }
   ButtUpInt = false;
@@ -177,6 +257,7 @@ void ButDown(){
     case 1:
       bbweight -= 0.01;
       updatebb_weight();
+      powdisp();
       break;
   }
   ButDownInt = false;
