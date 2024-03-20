@@ -36,6 +36,7 @@ Author: Lykourgos Tanious
 #define MenuButtonPin 15
 #define Trigger1 11
 #define Trigger2 12
+#define BuzzerPin 10
 #define SensorDistance 100 // in mm
 
 
@@ -58,13 +59,16 @@ volatile bool ButMenuInt = false;
 // time2-time1 1025 gives 320fps for tests
 volatile unsigned long time1 = 0;
 volatile unsigned long time2 = 0;
-unsigned long firstshottime =0;
+unsigned long firstshottime = 0;
 
 void setup() {
   Serial.begin(9200);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   delay(2000);
   display.clearDisplay();
+  //Init buzzer
+  // Make sure it does not draw more than 12 mA, use resistor if needed
+  pinMode (BuzzerPin, OUTPUT_12MA);
   // Boot splash
   Splash();
   // Main display UI init
@@ -101,8 +105,9 @@ void setup() {
   attachInterrupt(Trigger1, Trigger1_Time, HIGH );
   attachInterrupt(Trigger2, Trigger2_Time, HIGH );
 
+
   //Launch second core
-    multicore_launch_core1(core1_UI_updater);
+  multicore_launch_core1(core1_UI_updater);
 
 }
 
@@ -142,11 +147,13 @@ void loop() {
     time1 = 0;
     time2 = 0;
     shotcounter++;
+    tone(BuzzerPin, 3000, 500);
   }else if (abs(int(time1 - time2)) > 2000000){
     // Bad read reset timers and show error
     time1 = 0;
     time2 = 0;
     message("Retry");
+    tone(BuzzerPin, 500, 750);
   }
 
   // Measure RPS
@@ -165,6 +172,8 @@ void loop() {
 
 
 }
+
+
 
 void rpsdisp(){
   display.fillRect(27, 36, 53, 10, BLACK);
@@ -245,6 +254,7 @@ void ButUp(){
       bbweight += 0.01;
       updatebb_weight();
       powdisp();
+      tone(BuzzerPin, 2000, 250);
       break;
   }
   ButtUpInt = false;
@@ -258,6 +268,7 @@ void ButDown(){
       bbweight -= 0.01;
       updatebb_weight();
       powdisp();
+      tone(BuzzerPin, 2000, 250);
       break;
   }
   ButDownInt = false;
@@ -270,6 +281,7 @@ void ButMenu(){
   }
   delay(200);
   ButMenuInt = false;
+  tone(BuzzerPin, 1000, 250);
 }
 
 void updatebb_weight(){
@@ -294,10 +306,11 @@ void update_battery(){
   }else if (bat > 100){
     batper = " EXT";
   }else if (bat < 1){
-     batper = " LOW";
-     display.fillRoundRect(100, 1, 30, 11, 2, BLACK);
-     display.display();
-     delay(1000);
+    batper = " LOW";
+    display.fillRoundRect(100, 1, 30, 11, 2, BLACK);
+    display.display();
+    tone(BuzzerPin, 3000, 150);
+    delay(1000);
   }
   display.fillRoundRect(100, 1, 25, 11, 2, BLACK);
   display.drawRoundRect(100, 1, 25, 11, 2, WHITE);
@@ -309,6 +322,12 @@ void update_battery(){
   display.display();
 }
 
+void bootsound(){
+  digitalWrite(BuzzerPin, HIGH);
+  delay(500);
+  digitalWrite(BuzzerPin, LOW);
+  delay(500);
+}
 void Splash(){
   display.setTextSize(1);
   display.setTextColor(WHITE);
@@ -320,7 +339,7 @@ void Splash(){
   display.setCursor(25, 40);
   display.println("CHRONO");
   display.display();
-  delay(2000);
+  bootsound();
   display.clearDisplay();
   display.display();
 }
