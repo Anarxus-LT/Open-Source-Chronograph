@@ -103,8 +103,9 @@ void setup() {
   //Init IR Triggers
   pinMode (Trigger1, INPUT);
   pinMode (Trigger2, INPUT);
-  attachInterrupt(Trigger1, Trigger1_Time, HIGH );
-  attachInterrupt(Trigger2, Trigger2_Time, HIGH );
+  // Should be low trigger for photoresistor
+  //attachInterrupt(Trigger1, Trigger1_Time, HIGH );
+  //attachInterrupt(Trigger2, Trigger2_Time, HIGH );
 
 
   //Launch second core
@@ -170,6 +171,9 @@ void loop() {
     delay(2000);
     message("Go !");
   }
+
+  Serial.println("trigger1" + String(digitalRead(Trigger1)));
+  Serial.println("trigger2" + String(digitalRead(Trigger2)));
 
 
 }
