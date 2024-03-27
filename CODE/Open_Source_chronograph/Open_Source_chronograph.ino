@@ -103,9 +103,8 @@ void setup() {
   //Init IR Triggers
   pinMode (Trigger1, INPUT);
   pinMode (Trigger2, INPUT);
-  // Should be low trigger for photoresistor
-  //attachInterrupt(Trigger1, Trigger1_Time, HIGH );
-  //attachInterrupt(Trigger2, Trigger2_Time, HIGH );
+  attachInterrupt(Trigger1, Trigger1_Time, HIGH );
+  attachInterrupt(Trigger2, Trigger2_Time, HIGH );
 
 
   //Launch second core
@@ -150,7 +149,7 @@ void loop() {
     time2 = 0;
     shotcounter++;
     tone(BuzzerPin, 3000, 500);
-  }else if (abs(int(time1 - time2)) > 2000000){
+  }else if (abs(int(time2 - time1)) > 20000000 ){
     // Bad read reset timers and show error
     time1 = 0;
     time2 = 0;
@@ -172,8 +171,6 @@ void loop() {
     message("Go !");
   }
 
-  Serial.println("trigger1" + String(digitalRead(Trigger1)));
-  Serial.println("trigger2" + String(digitalRead(Trigger2)));
 
 
 }
@@ -234,11 +231,9 @@ void core1_UI_updater(){
 
 void Trigger1_Time(){
   time1 = micros();
-  Serial.println("t1");
 }
 void Trigger2_Time(){
   time2 = micros();
-  Serial.println("t2");
 }
 
 void ButtUpInt_f(){
