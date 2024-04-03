@@ -1,5 +1,6 @@
 # Open-Source-Chronograph
  An open source chronograph used to measure the speed and energy of projectiles. Mainly intended for airsoft.
+ ![finished](https://github.com/GhostGR/Open-Source-Chronograph/blob/da559c730b0adc7d982dfd7f53b529fddc37f72e/Photos/finished.jpg)
 
 ## Notes
 * If you use phototransistors instead of photodiodes, you will need less components
