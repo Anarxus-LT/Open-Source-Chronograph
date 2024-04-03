@@ -35,6 +35,7 @@ To upload the firmware to the pi pico
 
 ## PCB
 I used a protoboard and cut it down to fit the enclosure, you can see the dimensions and hole locations in the photos bellow
+**NOTE: ** Both PCBs needed to be trimed 1-2mm more tio fit the enclosure, i will design a better enclosure in the future.
 
 ### Main PCB
 ![Mainpcb 1](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/1.jpg)
