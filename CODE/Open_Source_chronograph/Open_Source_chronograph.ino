@@ -54,6 +54,8 @@ float powerj = 0;
 int rps = 0;
 int fps = 0;
 int shotcounter = 0;
+int UIupdate = 0;
+unsigned long UIlastUpdate = 0;
 volatile bool ButtUpInt = false;
 volatile bool ButDownInt = false;
 volatile bool ButMenuInt = false;
@@ -63,7 +65,7 @@ volatile unsigned long time2 = 0;
 unsigned long firstshottime = 0;
 
 void setup() {
-  Serial.begin(9200);
+  Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   delay(2000);
   display.clearDisplay();
@@ -103,12 +105,9 @@ void setup() {
   //Init IR Triggers
   pinMode (Trigger1, INPUT);
   pinMode (Trigger2, INPUT);
-  attachInterrupt(Trigger1, Trigger1_Time, HIGH );
-  attachInterrupt(Trigger2, Trigger2_Time, HIGH );
-
 
   //Launch second core
-  multicore_launch_core1(core1_UI_updater);
+  multicore_launch_core1(core1_IR_Triggers);
 
 }
 
@@ -137,28 +136,8 @@ void loop() {
     ButUp();
   }
 
-  // FPS measurment 
-  if (time1 != 0 && time2 != 0){
-    //Got a sucessful read
-    fps = floor(0.32808398950131235/((float(time2)-float(time1))/1000000.0));
-    message("PEW !");
-    fpsdisp(fps);
-    msdisp(fps);
-    powdisp();
-    time1 = 0;
-    time2 = 0;
-    shotcounter++;
-    tone(BuzzerPin, 3000, 500);
-  }else if (abs(int(time2 - time1)) > 20000000 ){
-    // Bad read reset timers and show error
-    time1 = 0;
-    time2 = 0;
-    message("Retry");
-    tone(BuzzerPin, 500, 750);
-  }
-
   // Measure RPS
-  if ((shotcounter == 1) && (firstshottime = 0)){
+  if ((shotcounter == 1) && (firstshottime == 0)){
     firstshottime=millis();
   }
   if (((millis()-firstshottime)>1000) && shotcounter != 0){
@@ -171,10 +150,56 @@ void loop() {
     message("Go !");
   }
 
+  // update UI after 10s
+  if (UIupdate == 0){
+    UIlastUpdate=millis();
+    UIupdate = 1;
+  }
+  if ((millis()-UIlastUpdate)>10000){
+    update_battery();
+    message("");
+    UIupdate = 0;
+  }
+
+  // Detect failed read after 1s
+  if (((micros() - time1) > 1000000) && time1 != 0){
+    time1 = 0;
+    time2 = 0;
+    message("Retry");
+    tone(BuzzerPin, 500, 750);
+  }
+  if (((micros() - time2) > 1000000) && time2 != 0){
+    time1 = 0;
+    time2 = 0;
+    message("Retry");
+    tone(BuzzerPin, 500, 750);
+  }
 
 
 }
 
+void core1_IR_Triggers(){
+  while (true){
+      while(digitalRead(Trigger1)==LOW);
+      while(digitalRead(Trigger1)==HIGH);
+      time1=micros();
+      while(digitalRead(Trigger2)==LOW);
+      while(digitalRead(Trigger2)==HIGH);
+      time2=micros();
+      if (time1 != 0 && time2 != 0){
+      //Got a sucessful read
+      fps = floor(0.32808398950131235/((float(time2)-float(time1))/1000000.0));
+      message("PEW !");
+      fpsdisp(fps);
+      msdisp(fps);
+      powdisp();
+      time1 = 0;
+      time2 = 0;
+      shotcounter++;
+      tone(BuzzerPin, 3000, 500);
+      }
+  }
+}
 
 
 void rpsdisp(){
@@ -219,21 +244,6 @@ void message(String msg){
   display.setCursor(5,50);
   display.print(msg);
   display.display();
-}
-
-void core1_UI_updater(){
-  while (true){
-      delay(10000);
-      update_battery();
-      message("");
-  }
-}
-
-void Trigger1_Time(){
-  time1 = micros();
-}
-void Trigger2_Time(){
-  time2 = micros();
 }
 
 void ButtUpInt_f(){
