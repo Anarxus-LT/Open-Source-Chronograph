@@ -5,6 +5,14 @@
 ## Notes
 * If you use phototransistors instead of photodiodes, you will need less components
 
+## Donations :smiley:
+Did you find the project useful ? feel free to buy me a cofee :coffee:
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=XSP59UAQV3676)
+
+
+No hard feeling if you dont :wink:
+
 ## Instructions
 To upload the firmware to the pi pico
 1. Unplug the usb cable
