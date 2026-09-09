@@ -1,9 +1,9 @@
 # Open-Source-Chronograph
  An open source chronograph used to measure the speed and energy of projectiles. Mainly intended for airsoft.
 
-[!CAUTION]
-SOME DISPLAYS HAVE INVERTED GND AND VCC!!!\
-I have added jumpers for both versions
+>[!CAUTION]
+>SOME DISPLAYS HAVE INVERTED GND AND VCC!!!\
+>I have added jumpers for both versions
 
 ToDo: upload photos with examples
 = FOR PIN 1 GND X FOR PIN 1 VCC
