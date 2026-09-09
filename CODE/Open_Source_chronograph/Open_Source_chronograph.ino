@@ -20,7 +20,8 @@ Read LICENCE
 Description: An open source chronograph used to measure the speed and 
             energy of projectiles. Mainly intended for airsoft.
 Author: Lykourgos Tanious
-
+Version: 2.0
+Changes: Complete redesign, using different sensor (TCRT5000)
 */
 
 #include <Wire.h>

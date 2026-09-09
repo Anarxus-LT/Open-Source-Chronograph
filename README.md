@@ -1,11 +1,11 @@
 # Open-Source-Chronograph
  An open source chronograph used to measure the speed and energy of projectiles. Mainly intended for airsoft.
- ![finished](https://github.com/GhostGR/Open-Source-Chronograph/blob/da559c730b0adc7d982dfd7f53b529fddc37f72e/Photos/finished.jpg)
 
-## Notes
-* If you use phototransistors instead of photodiodes, you will need less components
+[!CAUTION]
 SOME DISPLAYS HAVE INVERTED GND AND VCC!!!\
-ADDED JUMPERS FOR BOTH VERSION, MUST EXPLAIN HOW THEY WORK
+I have added jumpers for both versions
+
+ToDo: upload photos with examples
 = FOR PIN 1 GND X FOR PIN 1 VCC
 
 ## Donations :smiley:
@@ -36,24 +36,8 @@ To upload the firmware to the pi pico
 * 2 IR LEDs (and appropriete resistors)
 * 1A fuse
 
-### If using phototransitors
-* 2x phototransistors
 
-### if using photodiodes
-* 2x photodiodes
-* 2x 2n3904 BJT or similar
-* 2x 330Ω resistors
-* 2x 2.2kΩ resistors
 
 ## PCB
-I used a protoboard and cut it down to fit the enclosure, you can see the dimensions and hole locations in the photos bellow
-**NOTE: ** Both PCBs needed to be trimed 1-2mm more tio fit the enclosure, i will design a better enclosure in the future.
-
-### Main PCB
-![Mainpcb 1](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/1.jpg)
-![Mainpcb 2](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/2.jpg)
-![Mainpcb 3](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/3.jpg)
-
-### Buttons PCB
-![buttonspcb 1](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/4.jpg)
-![buttonspcb 2](https://github.com/GhostGR/Open-Source-Chronograph/blob/bf926e40d05efec4db9b234e9c52c35f1d220e2f/Photos/5.jpg)
+Should be easy to do on a protoboard
+Created proper PCB that you can send to your prefered PCB manufacturer
