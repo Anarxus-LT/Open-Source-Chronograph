@@ -16,7 +16,8 @@ Did you find the project useful ? feel free to buy me a cofee :coffee:
 
 No hard feeling if you dont :wink:
 
-## Instructions
+## Firmware Instructions
+ToDo: change file name?
 To upload the firmware to the pi pico
 1. Unplug the usb cable
 2. Press the "BOOTSEL" button and hold it
@@ -24,6 +25,7 @@ To upload the firmware to the pi pico
 4. Copy the "Open_Source_chronograph.ino.uf2" to the drive that showed up
 
 ## Components used
+ToDo: needs updating
 * TP4056 module with BMS
 * 18650 battery
 * 1x small power switch  (I used a generic 10x15mm switch)
@@ -35,6 +37,12 @@ To upload the firmware to the pi pico
 * 3 tactile switches
 * 2 IR LEDs (and appropriete resistors)
 * 1A fuse
+
+## Print settings
+ToDo
+
+## Assembly notes?
+ToDo
 
 
 
