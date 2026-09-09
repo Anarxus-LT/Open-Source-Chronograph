@@ -4,6 +4,9 @@
 
 ## Notes
 * If you use phototransistors instead of photodiodes, you will need less components
+SOME DISPLAYS HAVE INVERTED GND AND VCC!!!\
+ADDED JUMPERS FOR BOTH VERSION, MUST EXPLAIN HOW THEY WORK
+= FOR PIN 1 GND X FOR PIN 1 VCC
 
 ## Donations :smiley:
 Did you find the project useful ? feel free to buy me a cofee :coffee:
