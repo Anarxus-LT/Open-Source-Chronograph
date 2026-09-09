@@ -2,11 +2,11 @@
  An open source chronograph used to measure the speed and energy of projectiles. Mainly intended for airsoft.
 
 >[!CAUTION]
->SOME DISPLAYS HAVE INVERTED GND AND VCC!!!\
+>**SOME DISPLAYS HAVE INVERTED GND AND VCC!!!**\
 >I have added jumpers for both versions
-
-ToDo: upload photos with examples
-= FOR PIN 1 GND X FOR PIN 1 VCC
+>
+>ToDo: upload photos with examples
+>= FOR PIN 1 GND X FOR PIN 1 VCC
 
 ## Donations :smiley:
 Did you find the project useful ? feel free to buy me a cofee :coffee:
